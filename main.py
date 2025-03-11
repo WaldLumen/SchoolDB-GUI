@@ -15,7 +15,7 @@ root = tk.Tk()  # Создаём основное окно
 root.title("SchoolDB-GUI")  # Заголовок окна
 root.option_add(f"*Font", "JetBrainsMonoNerd{font_size}")
 root.geometry(f"{window_width}x{window_height}")  # Размер окна
-
+root.configure(bg="#ffffff")
 gui.side_menu(root)
 
 root.mainloop()
