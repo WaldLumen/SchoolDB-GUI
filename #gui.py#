@@ -66,13 +66,11 @@ def side_menu(root):
         print(f"Кнопка {button_name} нажата")
 
     button_tag_t = "button_t"
-    rounded_button(canvas, "Верх кнопка", 20, 50, 180, 60, 20, lambda event: on_button_click("Верх"), button_tag_t)
+    rounded_button(canvas, "Класы", 20, 50, 180, 60, 20, lambda event: on_button_click("Верх"), button_tag_t)
 
     button_tag_c = "button_c"
-    rounded_button(canvas, "Центр кнопка", 20, 150, 180, 60, 20, lambda event: on_button_click("Центр"), button_tag_c)
+    rounded_button(canvas, "Учителя", 20, 150, 180, 60, 20, lambda event: on_button_click("Центр"), button_tag_c)
 
     button_tag_b = "button_b"
-    rounded_button(canvas, "Нижняя кнопка", 20, 250, 180, 60, 20, lambda event: on_button_click("Низ"), button_tag_b)
+    rounded_button(canvas, "Предметы", 20, 250, 180, 60, 20, lambda event: on_button_click("Низ"), button_tag_b)
 
-
-    
