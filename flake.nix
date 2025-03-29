@@ -28,6 +28,7 @@
 	  pkgs.python312Packages.python-lsp-server
 	  pkgs.python312Packages.ruff
 	  pkgs.python312Packages.screeninfo
+	  pkgs.python312Packages.pillow
         ];
         shellHook = ''
           python --version

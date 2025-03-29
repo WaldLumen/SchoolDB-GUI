@@ -66,8 +66,6 @@ CREATE TABLE IF NOT EXISTS Grades (
     cur.close()
     conn.close()
 
-    print("База данных успешно создана!")
-
 def add_student(conn, first_name, last_name, birth_date, gender, class_id):
     """Добавляет студента в базу данных и возвращает его ID"""
     request_text = """
@@ -83,9 +81,17 @@ def add_student(conn, first_name, last_name, birth_date, gender, class_id):
 def get_students(conn):
     """Получает список студентов"""
     with conn.cursor() as cur:
-        cur.execute("SELECT student_id, first_name, last_name FROM Students")
+        cur.execute("SELECT student_id, first_name, last_name, birth_date, gender FROM Students")
         return cur.fetchall()
 
+
+def get_students_in_definite_class(conn, class_id):
+    """Получает список студентов"""
+    with conn.cursor() as cur:
+        cur.execute("SELECT student_id, first_name, last_name, birth_date, gender FROM Students WHERE class_id = %s", (class_id,))
+        return cur.fetchall()
+
+    
 def add_class(conn, class_name, teacher_id):
     """Добавляет класс в базу данных"""
     with conn.cursor() as cur:
@@ -93,6 +99,23 @@ def add_class(conn, class_name, teacher_id):
         class_id = cur.fetchone()[0]
         conn.commit()
     return class_id
+
+def get_classes(conn):
+    """Получает список классов с их ID и полным именем преподавателя"""
+
+    with conn.cursor() as cur:
+        cur.execute("""
+            SELECT c.class_id, 
+                   c.class_name, 
+                   COALESCE(t.first_name || ' ' || t.last_name, 'Нет преподавателя') AS teacher_name
+            FROM Classes c
+            LEFT JOIN Teachers t ON c.teacher_id = t.teacher_id;
+        """)
+        classes = cur.fetchall()  # Список кортежей (class_id, class_name, teacher_name)
+
+    return classes
+
+    
 def add_subject(conn, subject_name):
     """Добавляет предмет"""
     with conn.cursor() as cur:
@@ -111,3 +134,37 @@ def add_teacher(conn, first_name, last_name, subject_id):
         teacher_id = cur.fetchone()[0]
         conn.commit()
     return teacher_id
+
+def get_teachers(conn):
+    """Получает список всех учителей с их ID, именем, фамилией, ID и названием предмета"""
+    with conn.cursor() as cur:
+        try:
+            cur.execute("""
+                SELECT t.teacher_id, 
+                       t.first_name || ' ' || t.last_name AS full_name, 
+                       COALESCE(CAST(s.subject_id AS TEXT), 'Нет предмета') AS subject_id,
+                       COALESCE(s.subject_name, 'Без предмета') AS subject_name
+                FROM Teachers t
+                LEFT JOIN Subjects s ON t.subject_id = s.subject_id;
+            """)
+            return cur.fetchall()
+        except Exception as e:
+            print("Ошибка при выполнении SQL-запроса:", e)
+            return []
+
+
+def clear_database(conn):
+    """Удаляет все данные из базы, но сохраняет структуру таблиц"""
+    with conn.cursor() as cur:
+        cur.execute("""
+            TRUNCATE TABLE Grades, Students, Classes, Teachers, Subjects 
+            RESTART IDENTITY CASCADE;
+        """)
+        conn.commit()
+    print("Все данные удалены.")
+
+def get_subjects(conn):
+    """Получает список всех предметов с их ID и названиями"""
+    with conn.cursor() as cur:
+        cur.execute("SELECT subject_id, subject_name FROM Subjects;")
+        return cur.fetchall()  # Список кортежей (subject_id, subject_name)

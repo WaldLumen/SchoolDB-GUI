@@ -54,23 +54,4 @@ def on_leave(canvas, elements, original_color):
     for element in elements:
         canvas.itemconfig(element, fill=original_color, outline=original_color)  # Восстанавливаем цвета
 
-def side_menu(root):
-    """Создаёт боковое меню с кнопками с округлыми углами"""
-    frame = tk.Frame(root, borderwidth=2, relief="flat", bg="#ffffdf")
-    frame.pack(side="left", fill="y")  
-
-    canvas = tk.Canvas(frame, width=220, height=600, bg="#ffffdf", bd=0, highlightthickness=0)
-    canvas.pack(fill="y")
-
-    def on_button_click(button_name):
-        print(f"Кнопка {button_name} нажата")
-
-    button_tag_t = "button_t"
-    rounded_button(canvas, "Класы", 20, 50, 180, 60, 20, lambda event: on_button_click("Верх"), button_tag_t)
-
-    button_tag_c = "button_c"
-    rounded_button(canvas, "Учителя", 20, 150, 180, 60, 20, lambda event: on_button_click("Центр"), button_tag_c)
-
-    button_tag_b = "button_b"
-    rounded_button(canvas, "Предметы", 20, 250, 180, 60, 20, lambda event: on_button_click("Низ"), button_tag_b)
 
