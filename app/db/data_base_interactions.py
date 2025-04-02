@@ -168,3 +168,43 @@ def get_subjects(conn):
     with conn.cursor() as cur:
         cur.execute("SELECT subject_id, subject_name FROM Subjects;")
         return cur.fetchall()  # Список кортежей (subject_id, subject_name)
+
+def add_grade(conn, student_id, subject_id, grade, date_received):
+    """Добавляет оценку студенту по предмету"""
+    with conn.cursor() as cur:
+        cur.execute("""
+            INSERT INTO Grades (student_id, subject_id, grade, date_received)
+            VALUES (%s, %s, %s, %s) RETURNING grade_id;
+        """, (student_id, subject_id, grade, date_received))
+        grade_id = cur.fetchone()[0]
+        conn.commit()
+    return grade_id
+
+
+def get_all_grades(conn):
+    """Получает список всех оценок"""
+    with conn.cursor() as cur:
+        cur.execute("""
+            SELECT g.grade_id, 
+                   s.first_name || ' ' || s.last_name AS student_name, 
+                   sub.subject_name, 
+                   g.grade, 
+                   g.date_received
+            FROM Grades g
+            JOIN Students s ON g.student_id = s.student_id
+            JOIN Subjects sub ON g.subject_id = sub.subject_id;
+        """)
+        return cur.fetchall()
+
+
+def get_student_grades_by_period(conn, student_id, start_date, end_date):
+    """Получает оценки конкретного ученика за указанный период"""
+    with conn.cursor() as cur:
+        cur.execute("""
+            SELECT sub.subject_name, g.grade, g.date_received
+            FROM Grades g
+            JOIN Subjects sub ON g.subject_id = sub.subject_id
+            WHERE g.student_id = %s AND g.date_received BETWEEN %s AND %s
+            ORDER BY g.date_received;
+        """, (student_id, start_date, end_date))
+        return cur.fetchall()
