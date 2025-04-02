@@ -208,3 +208,37 @@ def get_student_grades_by_period(conn, student_id, start_date, end_date):
             ORDER BY g.date_received;
         """, (student_id, start_date, end_date))
         return cur.fetchall()
+    
+def get_grade_distribution(class_id):
+    """
+    Функция выполняет запрос к PostgreSQL и возвращает распределение оценок по группам для указанного класса.
+    :param class_id: ID класса
+    :return: Словарь с распределением оценок {"Отлично": 5, ...}
+    """
+    query = """
+        SELECT 
+            CASE 
+                WHEN grade >= 9 THEN '5'
+                WHEN grade >= 7 THEN '4'
+                WHEN grade >= 5 THEN '3'
+                WHEN grade >= 3 THEN '2'
+                WHEN grade >= 1 THEN '1'
+                ELSE 'Очень плохо'
+            END AS grade_group,
+            COUNT(*) AS count
+        FROM Grades g
+        JOIN Students s ON g.student_id = s.student_id
+        WHERE s.class_id = %s
+        GROUP BY grade_group
+        ORDER BY grade_group;
+    """
+    
+    try:
+        with get_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute(query, (class_id,))
+                result = cur.fetchall()
+                return {row[0]: row[1] for row in result}
+    except Exception as e:
+        print(f"Ошибка при выполнении запроса: {e}")
+        return {}

@@ -3,6 +3,8 @@ import tkinter.ttk as ttk
 import db
 import gui
 import datetime
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 class ClassCard(tk.Canvas):
     def __init__(self, parent, student_id, class_name, first_name, last_name, gender, birth_date, **kwargs):
@@ -183,6 +185,7 @@ def create_student_cards(root, class_id):
     for i, (student_id, first_name, last_name, birth_date, gender) in enumerate(students):
         card = ClassCard(frame, student_id, class_id, first_name, last_name, gender, birth_date)
         card.grid(row=i // 3, column=i % 3, padx=10, pady=10)
+    diagram(root, class_id)
 
 
 def date_entry(root, x, y, callback):
@@ -235,3 +238,27 @@ def date_entry(root, x, y, callback):
     year_spinbox.pack(side=tk.LEFT, padx=5)
 
     return frame
+
+def diagram(root, class_id):
+    marks = db.data_base_interactions.get_grade_distribution(class_id)
+
+
+    labels = list(marks.keys())
+    sizes = list(marks.values())
+
+
+    # Создаем новый фрейм
+    chart_frame = ttk.Frame(root)
+    chart_frame.place(x=10, y=850)
+
+    # Создаем фигуру и оси
+    fig, ax = plt.subplots(figsize=(1.8, 1.8))  # Здесь размер 8x6 дюймов
+    ax.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90, colors=['green', 'blue', 'orange', 'red', "yellow"])
+    ax.axis('equal')  # Делаем круг правильным
+    ax.set_title("Оценки:")
+
+    # Встраиваем график в Tkinter
+    canvas = FigureCanvasTkAgg(fig, master=chart_frame)
+    canvas.draw()
+    canvas.get_tk_widget().pack()
+

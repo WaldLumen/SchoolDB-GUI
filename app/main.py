@@ -17,7 +17,7 @@ root.configure(bg="#ffffff")
 
 
 db.data_base_interactions.create_tables(db.data_base_interactions.get_connection())
-#db.data_base_interactions.clear_database(conn)
+#db.data_base_interactions.clear_database(db.data_base_interactions.get_connection())
 
 
 

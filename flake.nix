@@ -29,6 +29,8 @@
 	  pkgs.python312Packages.ruff
 	  pkgs.python312Packages.screeninfo
 	  pkgs.python312Packages.pillow
+	  pkgs.python312Packages.matplotlib
+	  
         ];
         shellHook = ''
           python --version
