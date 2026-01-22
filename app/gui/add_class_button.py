@@ -7,7 +7,7 @@ def open_new_window(root, conn):
     """Создаёт новое окно с placeholder в полях ввода"""
     new_window = tk.Toplevel(root)
     new_window.title("add_class")
-    new_window.geometry("300x280")
+    new_window.geometry("500x280")
     new_window.configure(bg="#f4f4f4")
     new_window.img = None  
 
@@ -31,7 +31,7 @@ def open_new_window(root, conn):
 
     # === Стили ===
     font_main = ("Arial", 12)
-    button_style = {"bg": "black", "fg": "white", "font": font_main, "bd": 0, "width": 12, "height": 2}
+    button_style = {"bg": "black", "fg": "white", "font": font_main, "bd": 0, "width": 20, "height": 2}
 
     # === Поля ввода с placeholder ===
     name_entry = tk.Entry(new_window, width=20, font=font_main, bd=2, relief="solid", bg="white")
@@ -52,8 +52,4 @@ def open_new_window(root, conn):
     save_button.place(x=40, y=100)
 
 
-def create_button(root, window_width, window_height):
-    open_button = tk.Button(root, text="Добавить клас", command=lambda: gui.add_class_button.open_new_window(root, db.data_base_interactions.get_connection()), font=("Arial", 15),  bg="black", fg="white", bd=0, width=int(window_width * 0.006), height=int(window_height * 0.002))
-
-    open_button.place(x=window_width / 1.8, y= window_height - 100)
 

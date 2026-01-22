@@ -31,7 +31,7 @@ def open_new_window(root, conn):
 
     # === Стили ===
     font_main = ("Arial", 12)
-    button_style = {"bg": "black", "fg": "white", "font": font_main, "bd": 0, "width": 12, "height": 2}
+    button_style = {"bg": "black", "fg": "white", "font": font_main, "bd": 0, "width": 20, "height": 2}
 
     # === Поля ввода с placeholder ===
     subject_name_entry = tk.Entry(new_window, width=20, font=font_main, bd=2, relief="solid", bg="white")
@@ -48,7 +48,20 @@ def open_new_window(root, conn):
     save_button.place(x=40, y=150)
 
 def create_button(root, window_width, window_height):
-    open_button = tk.Button(root, text="Добавить предмет", command=lambda: gui.add_subject_button.open_new_window(root, db.data_base_interactions.get_connection()), font=("Arial", 15),  bg="black", fg="white", bd=0, width=int(window_width * 0.006), height=int(window_height * 0.002))
+    open_button = tk.Button(
+        root,
+        text="Добавить предмет",
+        font=("Arial", 15),
+        bg="black",
+        fg="white",
+        bd=0,
+        width=17,
+        height=2,
+        command=lambda: gui.add_subject_button.open_new_window(
+            root,
+            db.data_base_interactions.get_connection()
+        )
+    )
 
-    open_button.place(x=window_width / 2 - 500, y= window_height - 100)
+    open_button.place(x = window_width / 3 - 500, y = window_height - 160)
 
