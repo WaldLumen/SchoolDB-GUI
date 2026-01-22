@@ -4,6 +4,7 @@ from screeninfo import get_monitors
 import gui
 
 
+
 def refresh_classes(root):
     monitor = get_monitors()[0]
     screen_width = monitor.width
@@ -13,9 +14,8 @@ def refresh_classes(root):
 
     for widget in root.winfo_children():
         widget.destroy()
+
     gui.classes_cards.create_class_cards(root)
 
-    gui.add_class_button.create_button(root, window_width, window_height)
-    gui.add_teacher_button.create_button(root, window_width, window_height)
-    gui.add_subject_button.create_button(root, window_width, window_height)
-
+    # <-- создаём меню
+    gui.drop_down_menu.create_menu(root, window_width, window_height)
