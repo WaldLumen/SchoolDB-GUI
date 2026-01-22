@@ -7,36 +7,91 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 class ClassCard(tk.Canvas):
-    def __init__(self, parent, student_id, class_name, first_name, last_name, gender, birth_date, **kwargs):
-        super().__init__(parent, width=300, height=150, bg=parent["bg"], highlightthickness=0)
+    WIDTH = 480
+    HEIGHT = 160
+    RADIUS = 18
+    BG_COLOR = "white"
+
+    def __init__(self, parent, student_id, class_name,
+                 first_name, last_name, gender, birth_date, **kwargs):
+        super().__init__(
+            parent,
+            width=self.WIDTH,
+            height=self.HEIGHT,
+            bg=self.BG_COLOR,
+            highlightthickness=0,
+            **kwargs
+        )
 
         self.student_id = student_id
         self.first_name = first_name
         self.last_name = last_name
 
-        self.create_rounded_rect(2, 2, 290, 148, 15, outline="black", width=2, fill="white")
+        # Карточка
+        self.create_rounded_rect(
+            5, 5,
+            self.WIDTH - 5,
+            self.HEIGHT - 5,
+            self.RADIUS,
+            outline="black",
+            width=2,
+            fill="white"
+        )
 
-        self.create_text(140, 30, text=f"Имя: {first_name}", font=("Arial", 10), fill="black")
-        self.create_text(140, 50, text=f"Фамилия: {last_name}", font=("Arial", 10), fill="black")
-        self.create_text(140, 70, text=f"Пол: {gender}", font=("Arial", 10), fill="black")
-        self.create_text(140, 90, text=f"Дата рождения: {birth_date}", font=("Arial", 10), fill="black")
+        # Текст (ровные отступы)
+        x_text = self.WIDTH // 2
+        y_start = 30
+        y_step = 30
 
-        # Создаём кнопку и привязываем к ней команду
-        self.grades_button = tk.Button(self, text=" ", command=self.open_grades, font=("Arial", 9), bg="black", fg="white")
-        
-        # Добавляем кнопку в сам Canvas
-        self.create_window(140, 120, window=self.grades_button, anchor="center")
-        
-  
+        self.create_text(x_text, y_start, text=f"Имя: {first_name}", font=("Arial", 11))
+        self.create_text(x_text, y_start + y_step, text=f"Фамилия: {last_name}", font=("Arial", 11))
+        self.create_text(x_text, y_start + 2 * y_step, text=f"Пол: {gender}", font=("Arial", 11))
+        self.create_text(x_text, y_start + 3 * y_step, text=f"Дата рождения: {birth_date}", font=("Arial", 11))
+
+        # Бейдж журнала
+        self.badge = self.create_rounded_rect(
+            12, 12,
+            72, 62,
+            12,
+            outline="black",
+            width=2,
+            fill="white",
+            tags=("journal_badge",)
+        )
+
+        self.badge_icon = self.create_text(
+            42, 32,
+            text="📘",
+            font=("Arial", 14),
+            fill="black",
+            tags=("journal_badge",)
+        )
+
+
+        self.tag_bind("journal_badge", "<Button-1>", lambda e: self.open_grades())
+
+
+
+        # Клик по карточке
         self.bind("<Button-1>", self.on_click)
 
-    def create_rounded_rect(self, x1, y1, x2, y2, radius, **kwargs):
+    def create_rounded_rect(self, x1, y1, x2, y2, r, **kwargs):
         points = [
-            x1 + radius, y1, x2 - radius, y1, x2, y1, x2, y1 + radius,
-            x2, y2 - radius, x2, y2, x2 - radius, y2, x1 + radius, y2,
-            x1, y2, x1, y2 - radius, x1, y1 + radius, x1, y1
+            x1 + r, y1,
+            x2 - r, y1,
+            x2, y1,
+            x2, y1 + r,
+            x2, y2 - r,
+            x2, y2,
+            x2 - r, y2,
+            x1 + r, y2,
+            x1, y2,
+            x1, y2 - r,
+            x1, y1 + r,
+            x1, y1
         ]
         return self.create_polygon(points, smooth=True, **kwargs)
+
 
     def on_click(self, event):
         print(f"Вы выбрали ученика: {self.first_name} {self.last_name}")
@@ -175,12 +230,12 @@ def create_student_cards(root, class_id):
     for widget in root.winfo_children():
         widget.destroy()
 
-    open_button = tk.Button(root, text="back", command=lambda: gui.refresh_classes.refresh_classes(root), font=("Arial", 15), bg="black", fg="white", bd=0, width=2, height=2)
-    open_button.place(x=3, y=3)
+    open_button = tk.Button(root, text="back", command=lambda: gui.refresh_classes.refresh_classes(root), font=("Arial", 15), bg="black", fg="white", bd=0, width=6, height=2)
+    open_button.place(x=9, y=3)
     gui.add_student_button.create_button(root, 2000, 1200, class_id)
     
     frame = tk.Frame(root, bg="white", padx=10, pady=10)
-    frame.place(x=500, y=50)
+    frame.place(x=300, y=10)
     
     for i, (student_id, first_name, last_name, birth_date, gender) in enumerate(students):
         card = ClassCard(frame, student_id, class_id, first_name, last_name, gender, birth_date)
