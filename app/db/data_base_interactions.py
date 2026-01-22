@@ -4,10 +4,10 @@ def get_connection():
     """Создаёт и возвращает подключение к базе данных"""
     return psycopg.connect(
     dbname="schooldb",
-    user="sylv",
-    password="Selessal",
+    user="postgres",
+    password="",
     host="localhost",
-    port="5432"
+    port="1488"
     )
 
 def create_tables(conn):
@@ -64,7 +64,6 @@ CREATE TABLE IF NOT EXISTS Grades (
     
     # Закрытие соединения
     cur.close()
-    conn.close()
 
 def add_student(conn, first_name, last_name, birth_date, gender, class_id):
     """Добавляет студента в базу данных и возвращает его ID"""
@@ -134,6 +133,23 @@ def add_teacher(conn, first_name, last_name, subject_id):
         teacher_id = cur.fetchone()[0]
         conn.commit()
     return teacher_id
+
+def get_teacher_name(conn, teacher_id):
+    with conn.cursor() as cur:
+        cur.execute("""
+            SELECT first_name, last_name
+            FROM Teachers
+            WHERE teacher_id = %s
+        """, (teacher_id,))
+
+        result = cur.fetchone()
+
+        if result:
+            first_name, last_name = result
+            return f"{first_name} {last_name}"
+        return "Не назначен"
+
+
 
 def get_teachers(conn):
     """Получает список всех учителей с их ID, именем, фамилией, ID и названием предмета"""
